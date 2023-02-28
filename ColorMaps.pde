@@ -57,12 +57,15 @@ class RedBlueMap implements IntegerColorMap{
 class LerpRGBMap implements IntegerColorMap{
   int maxn;
   color c1,c2;
-  LerpRGBMap(int _maxn, color _c1, color _c2){
+  Integer maxCol;
+  LerpRGBMap(int _maxn, color _c1, color _c2,Integer _maxCol){
     maxn = _maxn;
+    maxCol = _maxCol;
     c1 = _c1;
     c2 = _c2;
   }
   color map(int i){
+    if(i>maxn && maxCol != null){return maxCol;}
     return lerpColor(c1,c2,(float)i/maxn);
   } 
   
@@ -70,9 +73,11 @@ class LerpRGBMap implements IntegerColorMap{
 
 class LerpHSLMap implements IntegerColorMap{
   int maxn;
+  Integer maxCol;
   color[] LUT;
-  LerpHSLMap(int _maxn, color c1, color c2){
+  LerpHSLMap(int _maxn, color c1, color c2,Integer _maxCol){
     maxn = _maxn;
+    maxCol = _maxCol;
     float[] hsl1 = inverseHSL(c1);
     float[] hsl2 = inverseHSL(c2);
     float delta = hsl2[0] - hsl1[0];
@@ -95,6 +100,7 @@ class LerpHSLMap implements IntegerColorMap{
     
   }
   color map(int i){
+    if(i>maxn && maxCol != null){return maxCol;}
     i = min(i,maxn -1);
     i = max(i,0);
     return LUT[i];
@@ -105,9 +111,11 @@ class LerpHSLMap implements IntegerColorMap{
 class LerpYCoCgMap implements IntegerColorMap{
   //Technically not a lerp, lerps magnitude of (Co,Cg) vector and angle seperately
   int maxn;
+  Integer maxCol;
   color[] LUT;
-  LerpYCoCgMap(int _maxn, color c1, color c2){
+  LerpYCoCgMap(int _maxn, color c1, color c2,Integer _maxCol){
     maxn = _maxn;
+    maxCol = _maxCol;
     float[] YCoCg1 = inverseYCoCg(c1);
     float[] YCoCg2 = inverseYCoCg(c2);
     float chromaMag1 = sqrt(YCoCg1[1]*YCoCg1[1] + YCoCg1[2]*YCoCg1[2]);
@@ -136,6 +144,7 @@ class LerpYCoCgMap implements IntegerColorMap{
     
   }
   color map(int i){ 
+    if(i>maxn && maxCol != null){return maxCol;}
     i = min(i,maxn -1);
     i = max(i,0);
     return LUT[i];
@@ -195,12 +204,24 @@ class WireWorldColorMap implements IntegerColorMap{
 
 class SandpileColorMap implements IntegerColorMap{
   color map(int i){
-    if (i <= 8){
-      int b = 255*((i & (1<<0))>>0);
-      int r = 255*((i & (1<<1))>>1);
-      int g = 255*((i & (1<<2))>>2);
-      return color(r,g,b);
+    switch(i){
+      case 0:
+        return color(0);
+      case 1:
+        return color(0,180,0);
+      case 2:
+        return color(150,20,150);
+      case 3:
+        return color(255,255,0);
+      //case 4:
+      //  return color(200,0,0);
+      //case 5:
+      //  return color(0,0,200);
+      //case 6:
+      //  return color(0,100,100);
+      //case 7:
+      default:
+        return color(255);
     }
-    return color(min(4*i,255));
   }
 }

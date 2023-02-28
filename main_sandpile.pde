@@ -1,27 +1,33 @@
-//PImage img;
-//VoronoiAutomata vorcells;
-//NullColorMap nullmap = new NullColorMap();
 
-//void setup(){
-//  //size(1000,625);
-//  fullScreen();
-//  frameRate(2);
-//  //img = loadImage("images/trappist.jpg");
-//  //img = loadImage("images/julia.png");
-//  //img = loadImage("images/disgusting.png");
-//  //img = loadImage("images/bridge.jpg");
-//  vorcells = new VoronoiAutomata(width,height);
-//  //vorcells.imageRandomise(img,0.01);
-//  //vorcells.imageNoise(img,0.05,0.01,0.01);
-//  vorcells.YCoCgNoise(0.01,0.005,0.005);
-//  //println(hex(color(0)));
-//  background(0);
-//  vorcells.show(0,0,1,nullmap,color(255));
-//}
+//10000steps = 2.8min at 60steps per second
+PImage img;
+int SCALE = 2;
+int stepsPerFrame = 5;
+boolean mooreMode = false;
+Sandpile sandpile;
+IntegerColorMap sandmap;
 
-//void draw(){
-//  background(0);
-//  vorcells.show(0,0,1,nullmap,color(255));
-//  vorcells.vonNeumannStep();
-//  //vorcells.vonNeumannStep();
-//}
+
+void setup(){
+  //size(1920,1080);
+  size(1024,1024);
+  //sandmap = new SandpileColorMap();
+  sandmap = new LerpYCoCgMap((mooreMode)?8:4,color(20,0,0),color(255,255,100),color(255));
+  //fullScreen();
+  sandpile = new Sandpile(width/SCALE,height/SCALE,false);
+  sandpile.setCenter( ( (mooreMode)?2:1 ) * width*height / (SCALE*SCALE));
+  background(0);
+
+  sandpile.show(0,0,SCALE,sandmap,null);
+
+}
+
+void draw(){
+  background(0);
+  sandpile.show(0,0,SCALE,sandmap,null);
+  for(int i=0;i<stepsPerFrame;i++){
+    sandpile.step(mooreMode);
+  }
+  saveFrame("C:\\sandFrames(Sandy)\\frame#######.png");
+  if(frameCount > 55100){exit();}
+}

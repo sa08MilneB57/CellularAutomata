@@ -86,6 +86,10 @@ class CAGrid{
     }
   }
   
+  void setCenter(int value){
+    editState(value,w/2,h/2);
+  }
+  
   //void fullRandomise(float... chances){
   //  float nonZeroProb = 0;
   //  for(float chance : chances){nonZeroProb += chance;}
@@ -147,7 +151,7 @@ class CAGrid{
         noStroke();
       } else {
         if(gridcolor == null){
-          
+          noStroke();
         } else {         
           stroke(gridcolor);
           strokeWeight(min(1,scale/5)); 
