@@ -1,33 +1,50 @@
-
-//10000steps = 2.8min at 60steps per second
-PImage img;
-int SCALE = 2;
-int stepsPerFrame = 5;
-boolean mooreMode = false;
-Sandpile sandpile;
-IntegerColorMap sandmap;
-
+WireWorldAutomata wires;
+final int scale = 10;
+IntegerColorMap cmap = new WireWorldColorMap();
+boolean running = false;
+boolean waitingForMouseUp = false;
+int paintState = 3;
 
 void setup(){
-  //size(1920,1080);
-  size(1024,1024);
-  //sandmap = new SandpileColorMap();
-  sandmap = new LerpYCoCgMap((mooreMode)?8:4,color(20,0,0),color(255,255,100),color(255));
+  size(600,600);
   //fullScreen();
-  sandpile = new Sandpile(width/SCALE,height/SCALE,false);
-  sandpile.setCenter( ( (mooreMode)?2:1 ) * width*height / (SCALE*SCALE));
-  background(0);
-
-  sandpile.show(0,0,SCALE,sandmap,null);
-
+  wires = new WireWorldAutomata(width/scale,height/scale);
+  frameRate(10);
 }
 
 void draw(){
-  background(0);
-  sandpile.show(0,0,SCALE,sandmap,null);
-  for(int i=0;i<stepsPerFrame;i++){
-    sandpile.step(mooreMode);
+  wires.show(0,0,scale,cmap,null);
+  if(running){
+    wires.step();
+  } else {
+    editor();
   }
-  saveFrame("C:\\sandFrames(Sandy)\\frame#######.png");
-  if(frameCount > 55100){exit();}
+}
+
+boolean mouseInWindow(){
+  return (mouseX > 0 && mouseY > 0 && mouseX < width && mouseY < height);
+}
+
+void editor(){
+  if(mousePressed && mouseInWindow()){
+    int cellX = (int)mouseX/scale;
+    int cellY = (int)mouseY/scale;
+    wires.editState(paintState,cellX,cellY);
+    waitingForMouseUp = true;
+  }
+}
+
+void keyPressed(){
+  if (Character.isDigit(key)){
+    int num = key - '0';
+    if (num<4){paintState = num;}
+  } else if (key == 'r'){
+    running = !running;
+  } else if (key=='c'){
+    wires.clear();
+  }
+}
+
+void mouseReleased(){
+  waitingForMouseUp = false;
 }
