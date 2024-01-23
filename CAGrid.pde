@@ -25,6 +25,13 @@ class CAGrid{
   }
   
   void clear(){editAll(defaultState);}
+  void clearNext(){
+    for (int y=0;y<h;y++){
+      for (int x=0;x<w;x++){
+        editState(defaultState,x,y);
+      }
+    }
+  }
   
   void binaryRandomise(float oneChance,int seed){randomSeed(seed);binaryRandomise(oneChance);}
   void binaryRandomise(float oneChance){

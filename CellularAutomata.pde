@@ -1,50 +1,68 @@
-WireWorldAutomata wires;
-final int scale = 10;
-IntegerColorMap cmap = new WireWorldColorMap();
-boolean running = false;
-boolean waitingForMouseUp = false;
-int paintState = 3;
+boolean record = false;
+boolean paused = false;
+
+final int maxColors = 360;
+int currentColor = 1;
+final int scale = 1;
+final RainbowAndBlackMap cmap = new RainbowAndBlackMap(maxColors);
+
+float noiseDx = 0.005*scale;
+float noiseDy = 0.005*scale;
+float noiseMu = 1;
+
+FallingSand cells;
 
 void setup(){
   size(600,600);
   //fullScreen();
-  wires = new WireWorldAutomata(width/scale,height/scale);
-  frameRate(10);
+  cells = new FallingSand(width/scale,height/scale,false);
+  singleSeed();
+  //randomGrid();
+  //frameRate(4);
+  
 }
 
 void draw(){
-  wires.show(0,0,scale,cmap,null);
-  if(running){
-    wires.step();
-  } else {
-    editor();
+  cells.show(0,0,scale,cmap,color(100));
+  if(mousePressed){
+    if(mouseX>=0 && mouseX<width && mouseY>=0 && mouseY < width){
+      if (scale==1){
+        for(int i=0; i<36; i++){
+          int x = constrain(mouseX + (int)(5*randomGaussian()),0,width-1);
+          int y = constrain(mouseY + (int)(5*randomGaussian()),0,height-1);
+          cells.setState(currentColor,x,y);
+        }
+      } else {
+        cells.setState(currentColor,mouseX/scale,mouseY/scale);
+      }
+    }
+    currentColor += 1;
+    currentColor = currentColor % (maxColors+1);
+    if(currentColor==0){currentColor = 1;}
+  }
+  if(!paused){
+    cells.step();
+    //if(record){saveFrame("frames2DTotallistic" + ((mooreMode)?"Moore":"VonNeumann") + ((stateDependent)?"StateDependent":"StateIndependent") + "Rule" + rule + "/frame##########.png");}
   }
 }
 
-boolean mouseInWindow(){
-  return (mouseX > 0 && mouseY > 0 && mouseX < width && mouseY < height);
+void randomGrid(){
+  cells.binaryRandomise(0.5f);
 }
 
-void editor(){
-  if(mousePressed && mouseInWindow()){
-    int cellX = (int)mouseX/scale;
-    int cellY = (int)mouseY/scale;
-    wires.editState(paintState,cellX,cellY);
-    waitingForMouseUp = true;
-  }
+void singleSeed(){
+  cells.clear();
+  cells.editState(1,width/scale/2,height/scale/2);
 }
 
 void keyPressed(){
-  if (Character.isDigit(key)){
-    int num = key - '0';
-    if (num<4){paintState = num;}
-  } else if (key == 'r'){
-    running = !running;
-  } else if (key=='c'){
-    wires.clear();
-  }
-}
-
-void mouseReleased(){
-  waitingForMouseUp = false;
+  if (key=='g'){
+    randomGrid();
+  } else if (key=='o'){
+    singleSeed();
+  } else if (key=='p'){
+    paused = !paused;
+  } else if (key=='n'){
+    cells.binaryNoise(noiseMu,noiseDx,noiseDy);
+  } 
 }

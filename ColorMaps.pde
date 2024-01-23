@@ -185,6 +185,17 @@ class RainbowMap implements IntegerColorMap{
   color absmap(int i){return map(abs(i));}
 }
 
+
+class RainbowAndBlackMap implements IntegerColorMap{
+  int n;
+  RainbowAndBlackMap(int _n){n=_n;}
+  color map(int i){
+    if(i==0){return color(0);}
+    i -= 1;
+    return HSL(TAU*i/n,1f,0.5);
+  }
+}
+
 class WireWorldColorMap implements IntegerColorMap{
   color map(int i){
     switch(i){
