@@ -47,7 +47,7 @@ void draw(){
 }
 
 void randomGrid(){
-  cells.binaryRandomise(0.5f);
+  cells.evenRandomise(maxColors+1);
 }
 
 void singleSeed(){
@@ -63,6 +63,6 @@ void keyPressed(){
   } else if (key=='p'){
     paused = !paused;
   } else if (key=='n'){
-    cells.binaryNoise(noiseMu,noiseDx,noiseDy);
+    cells.zeroOrEvenNoise(0.5,maxColors,noiseDx,noiseDy);
   } 
 }

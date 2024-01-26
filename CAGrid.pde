@@ -93,6 +93,23 @@ class CAGrid{
     }
   }
   
+  void zeroOrEvenNoise(float zero_chance,int n,float dx,float dy){zeroOrEvenNoise(zero_chance,n,dx,dy,random(10000),random(10000));}
+  void zeroOrEvenNoise(float zero_chance,int n,float dx,float dy,float seedx,float seedy){
+    if(n < 1){throw new IllegalArgumentException("There must be more than one possible cell state.");}
+    for (int y=0;y<h;y++){
+      for (int x=0;x<w;x++){
+        if(noise(seedx + x*dx + 833.437534,seedy + y*dy + 3285.327856)<=zero_chance){
+          editState(0,x,y);
+        } else {
+          float p = noise(seedx + x*dx,seedy + y*dy);
+          p = -2*p*p*p + 3*p*p;
+          int state = (int)(n*p + 0.5);
+          editState(state,x,y);
+        }
+      }
+    }
+  }
+  
   void setCenter(int value){
     editState(value,w/2,h/2);
   }
